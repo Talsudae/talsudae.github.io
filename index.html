@@ -28,6 +28,8 @@ const SETTINGS = {
   creditLink: "",        // קישור סאמיט לאשראי. ריק = לא מוצג
   listenLink: "https://submithub.com/link/tal-suday",
 
+  pixelId: "1424720188468661",   // פיקסל מטא TALTUL. ריק = כבוי
+
   // gift ריק ("") = לא מציג שורת תשורה. הסדר כאן = הסדר בדף.
   tiers: [
     { price: 150, photo: "photo-150.jpg", emoji: "😵", face: "מתעלף",  gift: "קרדיט ביוטיוב + סרטון ממני", best: false },
@@ -35,6 +37,15 @@ const SETTINGS = {
     { price: 30,  photo: "photo-30.jpg",  emoji: "😊", face: "מחייך",  gift: "שאאוטאאוט בסטורי",           best: false }
   ]
 };
+</script>
+<script>
+if (SETTINGS.pixelId){
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', SETTINGS.pixelId); fbq('track', 'PageView'); fbq('track', 'ViewContent', {content_name: 'album-support'});
+}
+function track(ev, data){ try { if (window.fbq) fbq('track', ev, data); } catch(e){} }
 </script>
 
 <style>
@@ -76,6 +87,7 @@ const SETTINGS = {
 
   .foot{margin-top:40px;text-align:center;font-size:15px;line-height:2}
   .foot a{color:var(--ink);font-weight:800}
+  .legal{margin-top:18px;text-align:center;font-size:12px;line-height:1.5;color:#666}
 
   .sheet{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;z-index:9}
   .sheet.on{display:flex}
@@ -104,6 +116,7 @@ const SETTINGS = {
     <a id="credit" target="_blank" rel="noopener" hidden>אין ביט? באשראי</a><br>
     <a id="listen">להאזין ולעקוב ←</a>
   </p>
+  <p class="legal">האתר משתמש בפיקסל של מטא כדי למדוד ביקורים ולהציג פרסומות. לא נאספים כאן שם, טלפון או פרטי תשלום.</p>
 </div>
 
 <div class="sheet" id="sheet">
@@ -143,7 +156,11 @@ const SETTINGS = {
     $("tiers").appendChild(el);
   });
 
+  let cur = null;
+  $("sOpen").addEventListener("click", () => track("AddPaymentInfo", {value: cur.price, currency: "ILS", content_name: "tier-" + cur.price}));
   function openBit(t){
+    cur = t;
+    track("InitiateCheckout", {value: t.price, currency: "ILS", content_name: "tier-" + t.price});
     $("sAmount").textContent = t.price + " ₪";
     $("sPhone").textContent = S.bitPhone;
     $("sName").textContent = "בביט יופיע: " + S.bitName;
