@@ -25,16 +25,21 @@ const SETTINGS = {
   bitName:  "טל יעקב סודאי",
   bitLink:  "https://www.bitpay.co.il/app/me/C86628A8-9469-7F4F-DD1E-F64BA0793B08CAEF",  // הקישור מתוך קוד הביט. ריק = מציג מספר להעתקה
 
-  creditLink: "",        // קישור סאמיט לאשראי. ריק = לא מוצג
+  creditLink: "",        // קישור לדף התשלום בסאמיט. ריק = כפתור האשראי לא מוצג
   listenLink: "https://submithub.com/link/tal-suday",
 
   pixelId: "1424720188468661",   // פיקסל מטא TALTUL. ריק = כבוי
 
-  // gift ריק ("") = לא מציג שורת תשורה. הסדר כאן = הסדר בדף.
+  // gifts = שורות התשורה. הסדר כאן = הסדר בדף. name ריק = בלי כותרת.
   tiers: [
-    { price: 150, photo: "photo-150.jpg", emoji: "😵", face: "מתעלף",  gift: "קרדיט ביוטיוב + סרטון ממני", best: false },
-    { price: 70,  photo: "photo-70.jpg",  emoji: "🙏", face: "מודה לך", gift: "סקיצה גנוזה, רק לך",        best: true  },
-    { price: 30,  photo: "photo-30.jpg",  emoji: "😊", face: "מחייך",  gift: "שאאוטאאוט בסטורי",           best: false }
+    { price: 200, photo: "photo-200.jpg", emoji: "🤯", face: "בהלם",    name: "תומכי־על / פטרונים",
+      gifts: ["חמשיר אישי עליך, עד 20 שניות, בוואטסאפ", "תיוג בסטורי תודה", "קרדיט ביוטיוב", "כרטיס זוגי 1+1", "השיר הסודי"], best: false },
+    { price: 140, photo: "photo-150.jpg", emoji: "😵", face: "מתעלף",  name: "",
+      gifts: ["קרדיט רשמי ב״תודות מיוחדות״ של האלבום ביוטיוב", "כרטיס זוגי 1+1 להופעה", "השיר הסודי"], best: false },
+    { price: 70,  photo: "photo-70.jpg",  emoji: "🙏", face: "מודה לך", name: "",
+      gifts: ["כרטיס זוגי 1+1 להופעה", "השיר הסודי"], best: true },
+    { price: 30,  photo: "photo-30.jpg",  emoji: "😊", face: "מחייך",  name: "",
+      gifts: ["השיר הסודי: סקיצה שעוד לא יצאה, בוואטסאפ"], best: false }
   ]
 };
 </script>
@@ -66,7 +71,7 @@ function track(ev, data){ try { if (window.fbq) fbq('track', ev, data); } catch(
         background:#fff;border:4px solid var(--ink);border-radius:14px 5px 16px 4px;
         box-shadow:5px 6px 0 var(--ink);padding:12px;cursor:pointer;
         -webkit-tap-highlight-color:transparent}
-  .tier:nth-child(odd){transform:rotate(-1deg)} .tier:nth-child(even){transform:rotate(.8deg)}
+  [role=listitem]:nth-child(odd) .tier{transform:rotate(-1deg)} [role=listitem]:nth-child(even) .tier{transform:rotate(.8deg)}
   .tier:active{box-shadow:2px 3px 0 var(--ink);translate:3px 3px}
   .tier.best{border-color:var(--purple);box-shadow:5px 6px 0 var(--purple)}
   .pic{position:relative;flex:none;width:112px;height:132px;background:#fff;padding:6px 6px 22px;
@@ -101,32 +106,93 @@ function track(ev, data){ try { if (window.fbq) fbq('track', ev, data); } catch(
   .open{display:block;margin:18px auto 0;max-width:320px;background:var(--purple);color:#fff;text-decoration:none;
         font-weight:800;font-size:20px;padding:14px;border:3px solid var(--ink);border-radius:40px}
   .small{font-size:13px;color:#555;margin-top:10px}
-  .x{margin-top:14px;background:none;border:0;font:500 16px Rubik;color:#555;cursor:pointer;padding:8px}
+  .x{margin-top:14px;background:none;border:0;font:500 16px Rubik;color:#555;cursor:pointer;padding:8px;min-height:44px}
+
+  .tier{width:100%;text-align:right;font:inherit;color:inherit}
+  .tname{font-size:15px;font-weight:800;color:var(--purple)}
+  .gift span{display:block}
+  .incl{font-size:13px;font-weight:500;color:#555;text-align:center;margin-top:30px}
+  .agree{font-size:13px;color:#555;text-align:center;margin-top:22px;line-height:1.5}
+  .agree a,.small a,.legal a{color:inherit;font-weight:800}
+  .credit{display:inline-block;font-size:14px;font-weight:500;color:var(--ink);padding:10px 4px;min-height:44px}
+  .terms{margin:26px auto 0;max-width:460px;background:#fff;border:3px solid var(--ink);border-radius:10px;padding:0 14px;font-size:14px;line-height:1.6}
+  .terms summary{cursor:pointer;font-weight:800;padding:12px 0;min-height:44px}
+  .terms h2{font-size:15px;margin-top:12px}
+  .terms p{margin-top:4px}
+  .terms div{padding-bottom:14px}
+  bdi{unicode-bidi:isolate}
+  :focus-visible{outline:3px solid var(--purple);outline-offset:3px}
+  .tier:focus-visible{outline:4px solid var(--ink);outline-offset:4px}
+  @media (prefers-reduced-motion:reduce){ .tier,[role=listitem] .tier,.pic{transform:none!important;translate:none!important} }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1 class="k" id="title"></h1>
-  <svg class="scrib" viewBox="0 0 600 30" preserveAspectRatio="none"><path d="M5 18 C 80 6, 160 26, 250 14 S 420 4, 595 16" fill="none" stroke="#7B2FF7" stroke-width="8" stroke-linecap="round"/></svg>
+  <svg class="scrib" viewBox="0 0 600 30" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M5 18 C 80 6, 160 26, 250 14 S 420 4, 595 16" fill="none" stroke="#7B2FF7" stroke-width="8" stroke-linecap="round"/></svg>
   <p class="sub k" id="subtitle"></p>
 
-  <div id="tiers"></div>
+  <main>
+  <p class="incl">כל מדרגה כוללת גם את כל מה שמתחתיה</p>
+  <div id="tiers" role="list"></div>
+
+  <p class="agree">בלחיצה על תשלום אני מסכים/ה <a href="#terms" class="toTerms">לתקנון התשורות</a></p>
 
   <p class="foot">
-    <a id="credit" target="_blank" rel="noopener" hidden>אין ביט? באשראי</a><br>
+    <a id="credit" class="credit" target="_blank" rel="noopener" hidden>אין ביט? לתשלום באשראי ←</a><br>
     <a id="listen">להאזין ולעקוב ←</a>
   </p>
-  <p class="legal">האתר משתמש בפיקסל של מטא כדי למדוד ביקורים ולהציג פרסומות. לא נאספים כאן שם, טלפון או פרטי תשלום.</p>
+  </main>
+
+  <details class="terms" id="terms">
+    <summary>תקנון התשורות והצהרת נגישות</summary>
+    <div>
+      <h2>כללי</h2>
+      <p>התשלום הוא רכישה של תשורה. כל מדרגה כוללת את כל התשורות שבמדרגות שמתחתיה. תשלום בסכום אחר מזכה בתשורות של המדרגה הגבוהה ביותר שהסכום מגיע אליה. על כל תשלום תישלח קבלה.</p>
+      <p>התשורות נשלחות לפי הטלפון והאינסטגרם שנכתבו בהערה לתשלום, ולכן חשוב לכתוב אותם נכון.</p>
+
+      <h2>השיר הסודי</h2>
+      <p>סקיצה של שיר שעוד לא יצא, נשלחת בוואטסאפ תוך 14 יום מהתשלום. היא לשימוש אישי בלבד: אין להפיץ אותה, להעלות לרשת או להעביר הלאה. הגרסה שתצא בסוף עשויה להיות שונה.</p>
+
+      <h2>כרטיס זוגי (1+1)</h2>
+      <p>כניסה לשני אנשים להופעה אחת בתשלום של טל, לבחירתך, במהלך שנת 2027, בכפוף למקום פנוי ולתנאי המקום. מתאמים מראש בוואטסאפ. הכרטיס אינו ניתן להמרה בכסף.</p>
+
+      <h2>קרדיט ביוטיוב</h2>
+      <p>השם יופיע ב״תודות מיוחדות״ ביוטיוב עם יציאת האלבום, כפי שנכתב בהערה לתשלום. מועד היציאה משוער ועשוי להשתנות. טל רשאי לבקש שם אחר במקום שם פוגעני או פרסומי.</p>
+
+      <h2>חמשיר אישי</h2>
+      <p>חמשיר אישי עד 20 שניות, שטל כותב ומקליט עליך, בהשראת מה שמופיע בפרופיל האינסטגרם שכתבת בהערה לתשלום. גרסה אחת, ללא תיקונים, שינויים או גרסאות נוספות. התוכן, הסגנון וההומור נקבעים לפי שיקול דעתו האמנותי הבלעדי של טל. ההקלטה נשלחת בוואטסאפ תוך 60 יום מהתשלום.</p>
+
+      <h2>תיוג בסטורי</h2>
+      <p>תיוג בסטורי תודה באינסטגרם של טל, תוך 30 יום מהתשלום, לחשבון שכתבת בהערה.</p>
+
+      <h2>מועדים וביטול</h2>
+      <p>אם משהו מתעכב, טל מעדכן בוואטסאפ. מאחר שהתשורות הן יצירה אישית ותוכן דיגיטלי שמוכנים במיוחד עבורך, לא ניתן לבטל את הרכישה לאחר התשלום, אלא אם החוק מחייב אחרת. אחריותו של טל מוגבלת לסכום ששולם.</p>
+
+      <h2>פרטיות</h2>
+      <p>הטלפון והאינסטגרם משמשים רק למשלוח התשורות. תשלום באשראי מתבצע בדף המאובטח של סאמיט, והאתר לא שומר פרטי תשלום. האתר משתמש בפיקסל של מטא כדי למדוד ביקורים ולהציג פרסומות.</p>
+
+      <h2>הצהרת נגישות</h2>
+      <p>האתר הותאם לניווט במקלדת ולקוראי מסך, עם ניגודיות צבעים מספקת, תמיכה בהגדלת טקסט וכיבוד הגדרת הפחתת תנועה. עדכון אחרון: נובמבר 2026. נתקלת בבעיה? כתבו לנו ונתקן.</p>
+
+      <h2>יצירת קשר</h2>
+      <p>טל יעקב סודאי, עוסק פטור. מייל: <a href="mailto:talski12@gmail.com"><bdi>talski12@gmail.com</bdi></a>, או הודעה פרטית באינסטגרם <bdi>@Talsuday</bdi>.</p>
+    </div>
+  </details>
+
+  <p class="legal">האתר משתמש בפיקסל של מטא. תשלום באשראי מתבצע בדף המאובטח של סאמיט, והאתר לא שומר פרטי תשלום.</p>
 </div>
 
 <div class="sheet" id="sheet">
-  <div class="panel">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sAmount" tabindex="-1">
     <div class="big k" id="sAmount"></div>
-    <p class="hint">את הסכום הזה מקלידים בביט,<br>ובהערה את האינסטגרם שלך 🙏</p>
-    <div class="copy" id="sCopy"><span id="sPhone"></span><button id="sBtn">העתקה</button></div>
+    <p class="hint">את הסכום הזה מקלידים בביט,<br>ובהערה: האינסטגרם שלך + טלפון לוואטסאפ 🙏</p>
+    <div class="copy" id="sCopy"><span id="sPhone"></span><button id="sBtn" type="button">העתקה</button></div>
     <a class="open" id="sOpen">לביט ←</a>
     <p class="small" id="sName"></p>
-    <button class="x" id="sClose">סגירה</button>
+    <p class="small"><a id="sCredit" target="_blank" rel="noopener" hidden>אין ביט? לתשלום באשראי ←</a></p>
+    <p class="small">בלחיצה על תשלום אני מסכים/ה <a href="#terms" class="toTerms">לתקנון</a></p>
+    <button class="x" id="sClose" type="button">סגירה</button>
   </div>
 </div>
 
@@ -136,27 +202,37 @@ function track(ev, data){ try { if (window.fbq) fbq('track', ev, data); } catch(
   $("title").textContent = S.title;
   $("subtitle").textContent = S.subtitle;
   $("listen").href = S.listenLink;
-  if (S.creditLink){ $("credit").href = S.creditLink; $("credit").hidden = false; }
+  if (S.creditLink){
+    ["credit","sCredit"].forEach(id => { $(id).href = S.creditLink; $(id).hidden = false;
+      $(id).addEventListener("click", () => track("InitiateCheckout", {currency: "ILS", content_name: "credit-card"})); });
+  }
+  document.querySelectorAll(".toTerms").forEach(a => a.addEventListener("click", () => { close(); $("terms").open = true; }));
 
   S.tiers.forEach(t => {
-    const el = document.createElement("div");
+    const li = document.createElement("div");
+    li.setAttribute("role", "listitem");
+    const el = document.createElement("button");
+    el.type = "button";
     el.className = "tier" + (t.best ? " best" : "");
+    el.setAttribute("aria-label", t.price + " שקלים" + (t.name ? ", " + t.name : "") + ": " + t.gifts.join(", ") + ". לתשלום בביט");
     el.innerHTML =
-      (t.best ? '<span class="badge">הכי נבחר</span>' : '') +
-      '<div class="pic"><i class="tape"></i><img alt="" loading="lazy"><span class="k"></span></div>' +
-      '<div class="info"><div class="price k">' + t.price + '<small> ₪</small></div>' +
-      '<p class="gift"></p><span class="go">בביט</span></div>';
+      (t.best ? '<span class="badge" aria-hidden="true">הכי נבחר</span>' : '') +
+      '<span class="pic" aria-hidden="true"><i class="tape"></i><img alt="" loading="lazy"><span class="k"></span></span>' +
+      '<span class="info" aria-hidden="true"><span class="tname"></span><span class="price k" style="display:block">' + t.price + '<small> ₪</small></span>' +
+      '<span class="gift" style="display:block"></span><span class="go">בביט</span></span>';
     const img = el.querySelector("img");
     img.onerror = () => { const e = document.createElement("b"); e.className = "emo"; e.textContent = t.emoji; img.replaceWith(e); };
     img.src = t.photo;
-    el.querySelector(".pic span").textContent = t.face;
+    el.querySelector(".pic > span").textContent = t.face;
+    const n = el.querySelector(".tname"); if (t.name) n.textContent = t.name; else n.remove();
     const g = el.querySelector(".gift");
-    if (t.gift) g.textContent = t.gift; else g.hidden = true;
-    el.onclick = () => openBit(t);
-    $("tiers").appendChild(el);
+    t.gifts.forEach(x => { const s = document.createElement("span"); s.textContent = x; g.appendChild(s); });
+    el.onclick = () => { lastBtn = el; openBit(t); };
+    li.appendChild(el);
+    $("tiers").appendChild(li);
   });
 
-  let cur = null;
+  let cur = null, lastBtn = null;
   $("sOpen").addEventListener("click", () => track("AddPaymentInfo", {value: cur.price, currency: "ILS", content_name: "tier-" + cur.price}));
   function openBit(t){
     cur = t;
@@ -168,8 +244,23 @@ function track(ev, data){ try { if (window.fbq) fbq('track', ev, data); } catch(
     $("sOpen").hidden = !S.bitLink;
     if (S.bitLink) $("sOpen").href = S.bitLink;
     $("sheet").classList.add("on");
+    $("sheet").querySelector(".panel").focus();
   }
-  const close = () => $("sheet").classList.remove("on");
+  function close(){
+    if (!$("sheet").classList.contains("on")) return;
+    $("sheet").classList.remove("on");
+    if (lastBtn) lastBtn.focus();
+  }
+  document.addEventListener("keydown", e => {
+    if (!$("sheet").classList.contains("on")) return;
+    if (e.key === "Escape") close();
+    if (e.key === "Tab"){
+      const f = [...$("sheet").querySelectorAll("a[href]:not([hidden]),button:not([hidden])")].filter(x => x.offsetParent);
+      if (!f.length) return;
+      if (e.shiftKey && document.activeElement === f[0]){ e.preventDefault(); f[f.length-1].focus(); }
+      else if (!e.shiftKey && document.activeElement === f[f.length-1]){ e.preventDefault(); f[0].focus(); }
+    }
+  });
   $("sClose").onclick = close;
   $("sheet").onclick = e => { if (e.target.id === "sheet") close(); };
   $("sBtn").onclick = async () => {
